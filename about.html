@@ -4,11 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Drew's Final</title>
+    <!-- TODO: Change title -->
+    <title>About</title>
 
     <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
     <link rel="stylesheet" href="./data/bulma.min.css">
+    <link rel="stylesheet" href="./styles.css">
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
@@ -53,26 +55,25 @@
             <span>Dataset</span>
           </a>
 
-          <a class="navbar-item" href="./data/viz.html" title="Data">
+          <a class="navbar-item" href="./viz.html" title="Data">
             <span class="icon"><i class="fas fa-chart-line"></i></span>
             <span>Visualizations</span>
           </a>
 
-          <a class="navbar-item" href="./data/writeup.html" title="Data">
+          <a class="navbar-item" href="./writeup.html" title="Data">
             <span class="icon"><i class="fas fa-table"></i></span>
             <span>Writeup</span>
           </a>
 
-          </div>
         </div>
+      </div>
 
-        <!-- Right navbar items -->
-        <div class="navbar-end">
-          <a class="navbar-item" href="about.html" title="About">
-            <span class="icon"><i class="fas fa-info-circle"></i></span>
-            <span>About</span>
-          </a>
-        </div>
+      <!-- Right navbar items -->
+      <div class="navbar-end">
+        <a class="navbar-item" href="about.html" title="About">
+          <span class="icon"><i class="fas fa-info-circle"></i></span>
+          <span>About</span>
+        </a>
       </div>
     </div>
   </nav>
@@ -82,9 +83,44 @@
     <div class="container">
       <!-- Begin page content -->
       <div class="content">
-        <h1 class="title">
-          Home
-        </h1>
+        <h1 id="about">About</h1>
+
+        <!-- Profile box -->
+        <!-- https://bulma.io/documentation/layout/media-object/ -->
+        <article class="media">
+          <figure class="media-left">
+            <p class="image is-128x128"><img class="is-rounded" src="./data/profile_img_1.jpg"></p>
+          </figure>
+
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <strong>Drew Noma</strong><br/>
+                CS Major, <a href="https://www.usfca.edu/">University of San Francisco</a><br/>
+                <em>Expected Graduation: Spring 2020</em><br/>
+                <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">dknoma@dons.usfca.edu</a>
+              </p>
+
+              <p>
+                CS lets me express who I am, and lets me create things for myself. I like to create Discord bots and code games in Unity in my free time. Also, I want a Corgi.
+              </p>
+
+              <!-- https://bulma.io/documentation/elements/tag/ -->
+              <div class="heading">Skills</div>
+
+              <div class="tags">
+                <span class="tag">Java</span>
+                <span class="tag">C#</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Golang</span>
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">SVG</span>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- End profile box -->
 
       </div>
       <!-- End page content -->
@@ -103,7 +139,8 @@
       </p>
 
       <p>
-        <a href="https://github.com/usf-cs360-spring2020/homework2-dknoma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+        <!-- TODO: Change to link to your Github repository -->
+        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
           <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
         </a>
 

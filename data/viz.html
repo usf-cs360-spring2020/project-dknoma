@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Drew's Final</title>
+
+        <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+        <!-- https://bulma.io/ -->
+        <link rel="stylesheet" href="bulma.min.css">
+        <link rel="stylesheet" href="style.css" type="text/css">
+        <!-- Load Font Awesome 5 (free) icons -->
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </head>
+
+    <body>
+    <!-- Page header -->
+    <!-- https://bulma.io/documentation/layout/hero/ -->
+    <section class="hero is-primary is-bold">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Drew's Views</h1>
+                <h2 class="subtitle">Steam Reviews</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page navigation -->
+    <!-- https://bulma.io/documentation/components/navbar/ -->
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="../index.html">
+                    <span class="icon"><i class="fas fa-home"></i></span>
+                    <span>Home</span>
+                </a>
+
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+
+            <div id="main-menu" class="navbar-menu has-text-weight-medium">
+                <!-- Left navbar items -->
+                <div class="navbar-start">
+                    <a class="navbar-item" href="../dataset.html" title="Data">
+                        <span class="icon"><i class="fas fa-table"></i></span>
+                        <span>Dataset</span>
+                    </a>
+
+                    <a class="navbar-item" href="./viz.html" title="Data">
+                        <span class="icon"><i class="fas fa-chart-line"></i></span>
+                        <span>Visualizations</span>
+                    </a>
+
+                    <a class="navbar-item" href="./writeup.html" title="Data">
+                        <span class="icon"><i class="fas fa-table"></i></span>
+                        <span>Writeup</span>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Right navbar items -->
+            <div class="navbar-end">
+                <a class="navbar-item" href="../about.html" title="About">
+                    <span class="icon"><i class="fas fa-info-circle"></i></span>
+                    <span>About</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End page navigation -->
+
+    <section class="section">
+        <div class="container">
+            <!-- Begin page content -->
+            <div class="content">
+                <h1 class="title">
+                    Implementation
+                </h1>
+                <h2 class="description">
+                    Description
+                </h2>
+                <p>
+                    Each data point represents each Parking Enforcement incident. The color is used to make it easier to tell the data points from the background map. All the lines on the map represent a limited number of streets in each district in San Francisco.
+                </p>
+                <h4>Interactivity</h4>
+                <p>
+                    Hover over a district will highlight that district in red, showing the name of the district near the user's cursor. When hovering over a data point a table of details will be displayed at the top left corner of the visualization. This table shows the details of an incident:
+                    <ul>
+                        <li>Incident id</li>
+                        <li>The date the incident was opened</li>
+                        <li>The district name</li>
+                        <li>Service Name (Parking Enforcement)</li>
+                        <li>The details of the car (if applicable)</li>
+                    </ul>
+                </p>
+                <h4>Conclusion</h4>
+                <p>There seems to be a higher correlation of Parking Enforcement incidents in areas that have a higher street density as well as being closer to major streets/highways (the wide white streets). This is likely due to the high amount of traffic the area gets which means that there is a higher chance that someone is there to enforce parking violations.</p>
+
+                <h4>D3</h4>
+
+                <div>
+                    <figure>
+                        <svg width="960" height="600" id="vis">
+                            <g id="basemap"></g>
+
+                            <!-- turn off pointer events for certain groups -->
+                            <g id="streets" pointer-events="none"></g>
+                            <g id="outline" pointer-events="none"></g>
+
+                            <g id="parkingEnforcement"></g>
+                            <g id="tooltip" pointer-events="none"></g>
+                            <g id="details" pointer-events="none"></g>
+                        </svg>
+
+                        <figcaption>
+                            Source: <a href="https://https://data.sfgov.org/City-Infrastructure/311-Cases/vw6y-z8j6">311 Cases</a>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page footer -->
+    <!-- https://bulma.io/documentation/layout/footer/ -->
+    <footer class="footer">
+        <div class="content has-text-centered is-size-7">
+            <p>
+                <a href="#top">
+                    <span class="fas fa-arrow-up"></span>
+                    <span class="has-text-weight-medium">Back to Top</span>
+                </a>
+            </p>
+
+            <p>
+                <a href="https://github.com/usf-cs360-spring2020/homework2-dknoma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+                    <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
+                </a>
+
+                <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+                    <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
+                </a>
+
+                <a href="https://bulma.io" class="button is-small">
+                    <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
+                </a>
+            </p>
+        </div>
+    </footer>
+    <!-- End page footer -->
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <script src="prototypes.js" crossorigin="anonymous"></script>
+
+    <!-- Mobile menu responsiveness -->
+    <!-- https://bulma.io/documentation/components/navbar/ -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+        if ($navbarBurgers.length > 0) {
+          $navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+              const target = el.dataset.target;
+              const $target = document.getElementById(target);
+              el.classList.toggle('is-active');
+              $target.classList.toggle('is-active');
+            });
+          });
+        }
+      });
+    </script>
+    </body>
+</html>
