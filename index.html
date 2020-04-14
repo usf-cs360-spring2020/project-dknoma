@@ -12,6 +12,15 @@
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+    <style>
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 10%;
+      }
+    </style>
   </head>
 
   <body>
@@ -57,22 +66,15 @@
             <span class="icon"><i class="fas fa-chart-line"></i></span>
             <span>Visualizations</span>
           </a>
-
-          <a class="navbar-item" href="./data/writeup.html" title="Data">
-            <span class="icon"><i class="fas fa-table"></i></span>
-            <span>Writeup</span>
-          </a>
-
-          </div>
         </div>
+      </div>
 
-        <!-- Right navbar items -->
-        <div class="navbar-end">
-          <a class="navbar-item" href="about.html" title="About">
-            <span class="icon"><i class="fas fa-info-circle"></i></span>
-            <span>About</span>
-          </a>
-        </div>
+      <!-- Right navbar items -->
+      <div class="navbar-end">
+        <a class="navbar-item" href="about.html" title="About">
+          <span class="icon"><i class="fas fa-info-circle"></i></span>
+          <span>About</span>
+        </a>
       </div>
     </div>
   </nav>
@@ -86,8 +88,27 @@
           Home
         </h1>
 
-        <img src="256px-Steam_icon_logo.svg.png">
+        <div>
+          <img src="256px-Steam_icon_logo.svg.png" class="center">
+        </div>
+        <br/>
+        <p> Before I get into an established game, I always check for reviews to get a general idea of what I'm getting
+          myself into. Of course, you have to take reviews with a grain of salt as reviews are going to vary most of the
+          time. This dataset takes about 400k reviews of the best selling games on Steam so there should be a good
+          amount of reviews with significant amounts of hours played meaning users actually played through a game
+          before reviewing it. Someone with a decent amount of hours in a game is bound to be more objective than
+          someone who put the game down after 1 hour. Of course, the same could be said about players who have an
+          extraordinary amount of hours put into a game (3000+ hrs). These people could be more biased towards the game
+          since they play it so often. Although, these players would also most likely know the game like the back of
+          their hand meaning there's potential that their reviews could show off their deeper understanding and
+          knowledge of the game.</p>
 
+        <p> Despite player's best efforts to give honest reviews on the games they love there could be other factors as
+          to why the reviews of a game are one way when it looks like they should be the other way. Reviews may not
+          always be honest. Games can get review bombed which means people spamming negative reviews on a game to lower
+          its rating. Other times, an increase in player base may contribute to a higher number and variation of review
+          quality. These visualizations are aiming to help find anything that may not be obvious from staring at walls
+          of review text.</p>
       </div>
       <!-- End page content -->
     </div>
