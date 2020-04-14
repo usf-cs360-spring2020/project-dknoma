@@ -78,50 +78,9 @@
         <div class="container">
             <!-- Begin page content -->
             <div class="content">
-                <h1 class="title">
-                    Implementation
-                </h1>
-                <h2 class="description">
-                    Description
-                </h2>
-                <p>
-                    Each data point represents each Parking Enforcement incident. The color is used to make it easier to tell the data points from the background map. All the lines on the map represent a limited number of streets in each district in San Francisco.
-                </p>
-                <h4>Interactivity</h4>
-                <p>
-                    Hover over a district will highlight that district in red, showing the name of the district near the user's cursor. When hovering over a data point a table of details will be displayed at the top left corner of the visualization. This table shows the details of an incident:
-                    <ul>
-                        <li>Incident id</li>
-                        <li>The date the incident was opened</li>
-                        <li>The district name</li>
-                        <li>Service Name (Parking Enforcement)</li>
-                        <li>The details of the car (if applicable)</li>
-                    </ul>
-                </p>
-                <h4>Conclusion</h4>
-                <p>There seems to be a higher correlation of Parking Enforcement incidents in areas that have a higher street density as well as being closer to major streets/highways (the wide white streets). This is likely due to the high amount of traffic the area gets which means that there is a higher chance that someone is there to enforce parking violations.</p>
-
-                <h4>D3</h4>
-
-                <div>
-                    <figure>
-                        <svg width="960" height="600" id="vis">
-                            <g id="basemap"></g>
-
-                            <!-- turn off pointer events for certain groups -->
-                            <g id="streets" pointer-events="none"></g>
-                            <g id="outline" pointer-events="none"></g>
-
-                            <g id="parkingEnforcement"></g>
-                            <g id="tooltip" pointer-events="none"></g>
-                            <g id="details" pointer-events="none"></g>
-                        </svg>
-
-                        <figcaption>
-                            Source: <a href="https://https://data.sfgov.org/City-Infrastructure/311-Cases/vw6y-z8j6">311 Cases</a>
-                        </figcaption>
-                    </figure>
-                </div>
+                <h1 class="title">Prototype</h1>
+                <p>Note: After doing a little digging, the large spikes coincide with big sales/holidays: Black Friday/Thanksgiving, etc. While they may feel like outliers at first, there is plenty of potential for showing more about how these big sales affect the actual helpfulness of reviews especially around the holidays. This is because people tend to receive games as gifts or buy the games themselves, so they may or may not get into the game and may leave unhelpful, negative reviews. The same could go the other way. As the sheer increase in number of people playing a game leads to an increase in number of reviews, it could be beneficial to take a look into the number of reviews plus the hours played of each review to get a better picture of what's going on those days.</p>
+                <img src="final_prototype_1.png" alt="Final Prototype 1" width="960px">
             </div>
         </div>
     </section>
