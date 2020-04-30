@@ -4,12 +4,52 @@
  * Count: 157
  */
 
-d3.json('steam_reduced.json')
+const svg = d3.select("body").select("svg#viz");
+const width = svg.width;
+const height = svg.height;
+
+const pad = 14;
+const diameter = 500;
+
+d3.json('steam_reduced_2.json')
   .then(draw);
 
-function draw(data) {
-  let json = d3.hierarchy(data);
+function draw(dat) {
+  let json = d3.hierarchy(dat);
   console.log(json);
+
+  let data = json.data;
+
+  // sort larger valued nodes first
+  // data.sort(function(a, b) {
+  //   return b.height - a.height || b.count - a.count;
+  // });
+
+  // size of layout will be width and height minus some padding
+  let layout = d3.cluster()
+                 .size([width - 2 * pad, height - 2 * pad])
+                 (json);
+
+  // call layout to calculate (x, y) locations of nodes and sizes
+  // layout(data);
+
+  // setup svg width and height
+  // let svg = d3.select(svg)
+  //             .style("width", width)
+  //             .style("height", height);
+
+  // shift (0, 0) a little bit to leave some padding
+  let plot = svg.append("g")
+                .attr("id", "plot")
+                .attr("transform", translate(pad, pad));
+
+  // data.links() are all of the edges as an array
+  drawLinks(plot.append("g"), data.links(), straightLine);
+
+  // data.descendants() are all of the nodes as an array
+  drawNodes(plot.append("g"), data.descendants(), true);
+
+  return svg.node();
 
   // const group = plot.append('g')
   //                   .attr('id', 'cells');
@@ -20,6 +60,79 @@ function draw(data) {
   //      .attr('y', 0)
   //      .attr('font-size', '10px')
   //      .text(json);
+}
+
+function drawLinks(g, links, generator) {
+  let paths = g.selectAll('path')
+               .data(links)
+               .enter()
+               .append('path')
+               .attr('d', generator)
+               .attr('class', 'link');
+}
+
+function drawNodes(g, nodes, raise) {
+  let circles = g.selectAll('circle')
+                 .data(nodes, node => node.data.name)
+                 .enter()
+                 .append('circle')
+                 .attr('r', d => d.r ? d.r : r)
+                 .attr('cx', d => d.x)
+                 .attr('cy', d => d.y)
+                 .attr('id', d => d.data.name)
+                 .attr('class', 'node')
+                 .style('fill', d => color(d.depth));
+
+  setupEvents(g, circles, raise);
+}
+
+function setupEvents(g, selection, raise) {
+  // selection.on('mouseover.highlight', function(d) {
+  //   // https://github.com/d3/d3-hierarchy#node_path
+  //   // returns path from d3.select(this) node to selection.data()[0] root node
+  //   let path = d3.select(this).datum().path(selection.data()[0]);
+  //
+  //   // select all of the nodes on the shortest path
+  //   let update = selection.data(path, node => node.data.name);
+  //
+  //   // highlight the selected nodes
+  //   update.classed('selected', true);
+  //
+  //   if (raise) {
+  //     update.raise();
+  //   }
+  // });
+  //
+  // selection.on('mouseout.highlight', function(d) {
+  //   let path = d3.select(this).datum().path(selection.data()[0]);
+  //   let update = selection.data(path, node => node.data.name);
+  //   update.classed('selected', false);
+  // });
+  //
+  // // show tooltip text on mouseover (hover)
+  // selection.on('mouseover.tooltip', function(d) {
+  //   showTooltip(g, d3.select(this));
+  // });
+  //
+  // // remove tooltip text on mouseout
+  // selection.on('mouseout.tooltip', function(d) {
+  //   g.select("#tooltip").remove();
+  // });
+}
+
+function straightLine () {
+  let line = d3.line()
+               .curve(d3.curveLinear)
+               .x(d => d.x)
+               .y(d => d.y);
+
+  return function (node) {
+    return line([node.source, node.target]);
+  };
+}
+
+function translate(x, y) {
+  return 'translate(' + String(x) + ',' + String(y) + ')';
 }
 
 // const urls = {
