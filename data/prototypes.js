@@ -10,7 +10,7 @@ console.log('width=%s, height=%s', width, height);
 
 const pad = 14;
 const diameter = 500;
-const radius = width / 2;
+const radius = width / 6;
 
 // let color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
 let format = d3.format(",d");
@@ -23,15 +23,15 @@ let arc = d3.arc()
             .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
 function partition(data) {
-  const root = d3.hierarchy(data);
-                 // .sum(d => d.value)
-                 // .sort((a, b) => b.value - a.value);
+  const root = d3.hierarchy(data)
+                 .sum(d => d.value)
+                 .sort((a, b) => b.value - a.value);
   return d3.partition()
            .size([2 * Math.PI, root.height + 1])
            (root);
 }
 
-d3.json('steam_reduced_with_genre.json')
+d3.json('steam_reduced_with_genre_10.json')
   .then(draw);
 
 function draw(data) {
@@ -39,15 +39,14 @@ function draw(data) {
 
   let root = partition(data);
   console.log("root");
-  console.log(root);
+  // console.log(root);
 
   root.each(d => d.current = d);
 
-  const svg = d3.create("svg")
-                .attr("viewBox", [0, 0, width, width])
-                .style("font", "10px sans-serif");
+  const thisSvg = svg.attr("viewBox", [0, 0, width, width])
+                     .style("font", "10px sans-serif");
 
-  const g = svg.append("g")
+  const g = thisSvg.append("g")
                .attr("transform", `translate(${width / 2},${width / 2})`);
 
   const path = g.append("g")
@@ -62,8 +61,8 @@ function draw(data) {
       .style("cursor", "pointer")
       .on("click", clicked);
 
-  // path.append("title")
-  //     .text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value)}`);
+  path.append("title")
+      .text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value)}`);
 
   const label = g.append("g")
                  .attr("pointer-events", "none")
@@ -131,7 +130,9 @@ function draw(data) {
     return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
   }
 
-  return svg.node();
+  console.log("done?");
+
+  return thisSvg.node();
 }
 
 //
