@@ -31,7 +31,7 @@ function partition(data) {
            (root);
 }
 
-d3.json('steam_reduced_with_genre_50.json')
+d3.json('steam_reduced_with_genre_no_reviews.json')
   .then(draw);
 
 function draw(data) {

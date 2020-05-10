@@ -79,9 +79,33 @@
         <div class="container">
             <!-- Begin page content -->
             <div class="content">
-                <h1 class="title">Alpha Prototype</h1>
-                <p>Note: After doing a little digging, the large spikes coincide with big sales/holidays: Black Friday/Thanksgiving, etc. While they may feel like outliers at first, there is plenty of potential for showing more about how these big sales affect the actual helpfulness of reviews especially around the holidays. This is because people tend to receive games as gifts or buy the games themselves, so they may or may not get into the game and may leave unhelpful, negative reviews. The same could go the other way. As the sheer increase in number of people playing a game leads to an increase in number of reviews, it could be beneficial to take a look into the number of reviews plus the hours played of each review to get a better picture of what's going on those days.</p>
-                <img src="final_prototype_1.png" alt="Final Prototype 1" width="960px">
+                <h1 class="title">Prototype</h1>
+                <h2>Question</h2>
+                <p>For various genres of games, how do the recommendation and helpful scores compare to the amount of hours put into the game each year. Really popular games should have a good range of reviews from helpful reviews from committed players with many hours to reviews that don't have much substance from players who played for around and hour and quit.</p>
+
+                <h2>Answer</h2>
+                <p>It doesn't seem that there is much useful information in the helpful scores as the yearly average scores are so low. This looks like it's due to how little that feature is used on most reviews.</p>
+                <p>That being said, people who do play a game for a significant amount of time tend to be the ones who leave reviews the most out of all reviewers. As there is no interactivity you can't tell, but the count of reviews posted at certain years along with the average hours played seems to show the peak playing time of certain games. Namely games like PLAYERUNKNOWN'S BATTLEGROUNDS (PUBG), Grand Theft Auto V (GTAV), MONSTER HUNTER: WORLD, Rocket League, and Rust. Having played many of these games around their peaks, it's neat seeing this correlation in my own visualization.</p>
+
+                <p>Many of said games are still played a lot today, just not to the degree that they once were. So it's interesting seeing these trends shift as different games pop up at different peaks.</p>
+
+                <h2>Encoding</h2>
+                <p>The visualization is encoding genre by color. Each genre has a selection of games of that genre which are also encoded in the same color as that genre.</p>
+
+                <figure>
+                    <svg width="960" height="600" id="sunburst">
+                    </svg>
+                </figure>
+
+                <h2>Supplemental Visualization</h2>
+
+                <p>This scatter plot encodes</p>
+
+                <img src="final_yearly_average_steam_review_stats.png">
+
+                <h2>Interactivity</h2>
+                <p>In order to get all the details of the reviews, details on demand via mouse hover will be implemented. Brushing or highlighting could also be used to highlight the reviews of a specific game, genre, or by recommended vs. not recommended. Also, game titles would be in the hover details otherwise there would be too much data on the screen.</p>
+                <p>If a scatter plot matrix is still used, brushing could be used to highlight the same games within each cell of the matrix</p>
             </div>
         </div>
     </section>
