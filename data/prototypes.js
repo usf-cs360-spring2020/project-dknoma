@@ -10,8 +10,19 @@ const height = svg.height;
 
 const pad = 14;
 const diameter = 500;
+const radius = width / 2;
 
-d3.json('steam_reduced_2.json')
+let color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
+let format = d3.format(",d");
+let arc = d3.arc()
+            .startAngle(d => d.x0)
+            .endAngle(d => d.x1)
+            .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
+            .padRadius(radius * 1.5)
+            .innerRadius(d => d.y0 * radius)
+            .outerRadius(d => Math.max(d.y0 * radius, d.y1 * radius - 1));
+
+d3.json('steam_reduced_with_genre.json')
   .then(draw);
 
 function draw(dat) {
@@ -19,6 +30,7 @@ function draw(dat) {
   console.log(json);
 
   let data = json.data;
+  console.log(data);
 
   // sort larger valued nodes first
   // data.sort(function(a, b) {
@@ -26,9 +38,9 @@ function draw(dat) {
   // });
 
   // size of layout will be width and height minus some padding
-  let layout = d3.cluster()
-                 .size([width - 2 * pad, height - 2 * pad])
-                 (json);
+  // let layout = d3.cluster()
+  //                .size([width - 2 * pad, height - 2 * pad])
+  //                (json);
 
   // call layout to calculate (x, y) locations of nodes and sizes
   // layout(data);
@@ -39,52 +51,50 @@ function draw(dat) {
   //             .style("height", height);
 
   // shift (0, 0) a little bit to leave some padding
-  let plot = svg.append("g")
-                .attr("id", "plot")
-                .attr("transform", translate(pad, pad));
+  // let plot = svg.append("g")
+  //               .attr("id", "plot")
+  //               .attr("transform", translate(pad, pad));
 
   // data.links() are all of the edges as an array
-  drawLinks(plot.append("g"), data.links(), straightLine);
+  // drawLinks(plot.append("g"), data.links(), straightLine);
 
   // data.descendants() are all of the nodes as an array
-  drawNodes(plot.append("g"), data.descendants(), true);
+  // drawNodes(plot.append("g"), data.descendants(), true);
 
-  return svg.node();
-
-  // const group = plot.append('g')
-  //                   .attr('id', 'cells');
-  //
-  // group.append('g')
-  //      .append('text')
-  //      .attr('x', 0)
-  //      .attr('y', 0)
-  //      .attr('font-size', '10px')
-  //      .text(json);
+  // return svg.node();
 }
 
-function drawLinks(g, links, generator) {
-  let paths = g.selectAll('path')
-               .data(links)
-               .enter()
-               .append('path')
-               .attr('d', generator)
-               .attr('class', 'link');
+function partition(data) {
+  return d3.partition()
+           .size([2 * Math.PI, radius])
+           (d3.hierarchy(data)
+              .sum(d => d.value)
+              .sort((a, b) => b.value - a.value));
 }
-
-function drawNodes(g, nodes, raise) {
-  let circles = g.selectAll('circle')
-                 .data(nodes, node => node.data.name)
-                 .enter()
-                 .append('circle')
-                 .attr('r', d => d.r ? d.r : r)
-                 .attr('cx', d => d.x)
-                 .attr('cy', d => d.y)
-                 .attr('id', d => d.data.name)
-                 .attr('class', 'node')
-                 .style('fill', d => color(d.depth));
-
-  setupEvents(g, circles, raise);
-}
+//
+// function drawLinks(g, links, generator) {
+//   let paths = g.selectAll('path')
+//                .data(links)
+//                .enter()
+//                .append('path')
+//                .attr('d', generator)
+//                .attr('class', 'link');
+// }
+//
+// function drawNodes(g, nodes, raise) {
+//   let circles = g.selectAll('circle')
+//                  .data(nodes, node => node.data.name)
+//                  .enter()
+//                  .append('circle')
+//                  .attr('r', d => d.r ? d.r : r)
+//                  .attr('cx', d => d.x)
+//                  .attr('cy', d => d.y)
+//                  .attr('id', d => d.data.name)
+//                  .attr('class', 'node')
+//                  .style('fill', d => color(d.depth));
+//
+//   setupEvents(g, circles, raise);
+// }
 
 function setupEvents(g, selection, raise) {
   // selection.on('mouseover.highlight', function(d) {
