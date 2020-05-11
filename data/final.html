@@ -82,7 +82,13 @@
                 <h1 class="title">Prototype</h1>
                 <h2>Peer Feedback</h2>
                     <p>There was either missing, incomplete, or feedback on the wrong version of the visualization for my beta. So the only real feedback I have is from the live feedback session.</p>
-                    <p>The main concerns were how to wrangle the data to create a hierarchical visualization and use the scatter plot for context. So I used python scripts to combine the two datasets. One file was used for the scatter plot to give context on trends and relationships over time. The combined csv was then run through a custom python script to turn it into hierarchical json format to be used in a sunburst visualization to show the breakdown of games per genre, the games' subtypes, and review count per game.</p>
+                    <p>The main concerns were how to wrangle the data to create a hierarchical visualization and use
+                        the scatter plot for context. So I used python scripts to combine the two datasets. The
+                        scatterplot was actually scrapped in favor of a filtered view line chart to better show
+                        trends per year in a cleaner way. One file was used for the line chart to give context on
+                        trends of reviews over time for each game. The combined csv was then run through a custom
+                        python script to turn it into hierarchical json format to be used in a sunburst visualization to
+                        show the breakdown of games per genre, the games' subtypes, and review count per game.</p>
 
                 <h2>Question</h2>
                     <p>For various genres of games, how do the recommendation and helpful scores compare to the amount of hours put into the game each year. Really popular games should have a good range of reviews from helpful reviews from committed players with many hours to reviews that don't have much substance from players who played for around and hour and quit.</p>
