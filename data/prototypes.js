@@ -85,8 +85,8 @@ function draw(data) {
       .style("cursor", "pointer")
       .on("click", clicked);
 
-  console.log("path");
-  console.log(path);
+  // console.log("path");
+  // console.log(path);
 
   path.append("title")
       .text(d => {
@@ -179,7 +179,7 @@ const lines_svg = d3.select("body").select("svg#lines");
 const l_width = parseInt(lines_svg.style("width"));
 const l_height = parseInt(lines_svg.style("height"));
 
-const margin = {top: 10, right: 30, bottom: 30, left: 60},
+const margin = {top: 60, right: 30, bottom: 60, left: 60},
       lines_width = l_width - margin.left - margin.right,
       lines_height = l_height - margin.top - margin.bottom;
 
@@ -189,7 +189,7 @@ lines_svg.append("g")
 console.log(lines_svg);
 
 const defaultBeginDate = new Date("2018-1-1");
-const defaultEndDate = new Date("2018-12-1");
+const defaultEndDate = new Date("2018-12-31");
 
 d3.select("#titleSelectButton")
   .selectAll('titleOptions')
@@ -212,13 +212,15 @@ var myColor = d3.scaleOrdinal()
                 .domain(titles)
                 .range(d3.interpolateRainbow);
 
+let game_reviews_per_day_map = {};
+
 d3.csv('steam_combined_final.csv', row => {
     let convert = {};
 
     let title = row['title'];
     let all_reviews = row['all_reviews'].split(',')[0];
     let genre = row['genre'];
-    let date_posted = row['date_posted'];
+    let date_posted = new Date(row['date_posted']);
     let helpful = row['helpful'];
     let hour_played = row['hour_played'];
     let recommendation = row['recommendation'];
@@ -226,10 +228,24 @@ d3.csv('steam_combined_final.csv', row => {
     convert['title'] = title;
     convert['all_reviews'] = all_reviews;
     convert['genre'] = genre;
-    convert['date_posted'] = new Date(date_posted);
+    convert['date_posted'] = date_posted;
     convert['helpful'] = parseInt(helpful);
     convert['hour_played'] = parseInt(hour_played);
     convert['recommendation'] = recommendation;
+
+    let dRev;
+    if(title in game_reviews_per_day_map) {
+      dRev = game_reviews_per_day_map[title];
+    } else {
+      dRev = game_reviews_per_day_map[title] = {};
+    }
+
+    if(date_posted in dRev) {
+      dRev[date_posted] = dRev[date_posted] + 1;
+    } else {
+      dRev[date_posted] = 1;
+    }
+
 
     return convert;
   })
@@ -237,7 +253,7 @@ d3.csv('steam_combined_final.csv', row => {
 
 
 const scales = {
-  x: d3.scaleLinear(),
+  x: d3.scaleTime(),
   y: d3.scaleLinear(),
 };
 
@@ -245,7 +261,7 @@ const scales = {
 // that is one benefit of prototyping!
 scales.x
       .range([0, lines_width])
-      .domain([defaultBeginDate.getMonth(), defaultEndDate.getMonth()]);
+      .domain([defaultBeginDate, defaultEndDate]);
 
 scales.y
       .range([lines_height, 0])
@@ -253,7 +269,9 @@ scales.y
 
 function drawLines(data) {
   console.log(data[0]);
+  console.log(game_reviews_per_day_map);
 
+  drawTitles();
   drawAxis();
   // x axis
   // let x = d3.scaleLinear()
@@ -272,7 +290,20 @@ function drawLines(data) {
   // lines_svg.append("g")
   //          .call(d3.axisLeft(y));
 
+  let line = lines_svg.append('g')
+                      .append("path")
+                      .datum(data)
+                      .attr("d", d3.line()
+                                   .x(d => scales.x(+d.date_posted))
+                                   .y(d => scales.y(game_reviews_per_day_map[d.title][d.date_posted]))
+                      )
+                      .attr("stroke", function(d){ return myColor("valueA") })
+                      .style("stroke-width", 4)
+                      .style("fill", "none");
+
   function updateByTitle(title) {
+    d3.selectAll('.x-axis-game-title')
+      .text(title);
     // Create new data with the selection?
     let dataFilter = data.map(d => {
       return {
@@ -286,7 +317,7 @@ function drawLines(data) {
         .duration(1000)
         .attr("d", d3.line()
                      .x(function(d) {
-                       console.log(d);
+                       // console.log(d);
                        return scales.x(+d.time)
                      })
                      .y(function(d) { return scales.y(+d.value) })
@@ -294,8 +325,9 @@ function drawLines(data) {
         .attr("stroke", myColor(title));
   }
 
-  function updateByYear(title) {
-
+  function updateByYear(year) {
+    d3.selectAll('.x-axis-title')
+      .text(year);
   }
 
   // When the button is changed, run the updateChart function
@@ -314,25 +346,64 @@ function drawLines(data) {
   });
 }
 
+function drawTitles() {
+  const xMiddle = margin.left + midpoint(scales.x.range());
+  const yMiddle = margin.top + midpoint(scales.y.range());
+
+  const xGroup = lines_svg.append('g');
+
+  const xTitle = xGroup.append('text')
+                       .attr('class', 'x-axis-title')
+                       .text(defaultBeginDate.getFullYear());
+
+  xTitle.attr('x', xMiddle)
+        .attr('y', lines_height)
+        .attr('dy', 100)
+        .attr('text-anchor', 'middle');
+
+  const gameTitleX = xGroup.append('text')
+                           .attr('class', 'x-axis-game-title')
+                           .text(titles[0]);
+  gameTitleX.attr('x', xMiddle)
+            .attr('y', margin.top)
+            .attr('dy', -5)
+            .attr('text-anchor', 'middle');
+
+  const yGroup = lines_svg.append('g');
+
+  // set the position by translating the group
+  yGroup.attr('transform', translate(4, yMiddle));
+
+  const yTitle = yGroup.append('text')
+                       .attr('class', 'y-axis-title')
+                       .text('Review Count');
+
+  // keep x, y at 0, 0 for rotation around the origin
+  yTitle.attr('x', 0)
+        .attr('y', 0)
+        .attr('dy', '1.75ex')
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'rotate(-90)');
+}
+
 function drawAxis() {
   // place the xaxis and yaxis in their own groups
-  const xGroup = svg.append('g')
-                    .attr('id', 'x-axis')
-                    .attr('class', 'axis');
-  const yGroup = svg.append('g')
-                    .attr('id', 'y-axis')
-                    .attr('class', 'axis');
+  const xGroup = lines_svg.append('g')
+                          .attr('id', 'x-axis')
+                          .attr('class', 'axis');
+  const yGroup = lines_svg.append('g')
+                          .attr('id', 'y-axis')
+                          .attr('class', 'axis');
 
   // create axis generators
   const xAxis = d3.axisBottom(scales.x);
   const yAxis = d3.axisLeft(scales.y);
 
   // https://github.com/d3/d3-format#locale_formatPrefix
-  xAxis.ticks(9, 's')
-       .tickSizeOuter(0)
-       .tickSizeInner(0);
+  xAxis.tickFormat(d3.timeFormat("%b"))
+
   yAxis.ticks(5)
-       .tickSizeInner(-width + margin.left + margin.right)
+       .tickSizeInner(-lines_width)
        .tickFormat(d => d3.format('.1s')(d))
        .tickSizeOuter(0);
 
@@ -341,6 +412,17 @@ function drawAxis() {
   xGroup.call(xAxis);
 
   // shift y axis to correct location
-  yGroup.attr('transform', translate(margin.left, margin.top))
+  yGroup.attr('transform', translate(margin.left, margin.top));
   yGroup.call(yAxis);
+}
+
+/**
+ * Helper Functions
+ */
+function midpoint(range) {
+  return range[0] + (range[1] - range[0]) / 2.0;
+}
+
+function translate(x, y) {
+  return 'translate(' + String(x) + ',' + String(y) + ')';
 }
