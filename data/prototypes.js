@@ -25,7 +25,15 @@ function partition(data) {
   const root = d3.hierarchy(data)
                  .sum(d => d.value)
                  .sort((a, b) => {
-                   return b.value - a.value
+                   let value;
+                   if(a.parent.parent !== null && a.parent.parent.data.name === 'genre') {
+                     value = b.children.find(ele => ele.data.name === 'reviews').data.size -
+                             a.children.find(ele => ele.data.name === 'reviews').data.size;
+                     // value = `review count = ${format(d.children.find(ele => ele.data.name === 'reviews').data.size)}`;
+                   } else {
+                     value = b.value - a.value;
+                   }
+                   return value;
                  });
   return d3.partition()
            .size([2 * Math.PI, root.height + 1])
