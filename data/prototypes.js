@@ -16,8 +16,12 @@ const titles = ["PLAYERUNKNOWN'S BATTLEGROUNDS", "Human: Fall Flat", "GOD EATER 
   "Rust", "Grand Theft Auto V", "Rocket League®", "Tom Clancy's Rainbow Six® Siege", "Cold Waters", "Moonlighter",
   "Warhammer 40,000: Mechanicus", "Tannenberg", "Wargroove", "Sid Meier's Civilization® VI: Gathering Storm",
   "Sid Meier’s Civilization® VI: Rise and Fall", "Survivor Pass: Vikendi"];
+const genres = ["Indie", "Action", "Adventure", "Simulation", "Strategy", "RPG", "Massively Multiplayer", "Casual",
+"Sports", "Early Access", "Racing", "Utilities", "Design & Illustration", "Animation & Modeling"];
 
 console.log('width=%s, height=%s', width, height);
+
+let currentGenre = genres[0];
 
 const radius = width / 6;
 let format = d3.format(',d');
@@ -98,6 +102,7 @@ function draw(data) {
           let score = d.children
                        .find(ele => ele.data.name !== 'reviews' && ele.data.name !== 'Game Details')
             .data.name;
+          currentGenre = d.parent.data.name;
           joined = `Genre: ${d.parent.data.name}\nTitle: ${d.data.name}\nReview Score: ${score}\nReview count: ${value}`;
         } else {
           joined = `${d.ancestors()
@@ -211,10 +216,6 @@ d3.select('#yearSelectButton')
   .property('selected', d => d === defaultBeginDate.getFullYear())
   .attr('value', d => { return d; }); // corresponding value returned by the button
 
-var myColor = d3.scaleOrdinal()
-                .domain(titles)
-                .range(d3.interpolateRainbow);
-
 let game_reviews_per_day_map = {};
 
 d3.csv('steam_combined_final.csv', row => {
@@ -249,11 +250,11 @@ d3.csv('steam_combined_final.csv', row => {
       dRev[date_posted] = 1;
     }
 
-
     return convert;
   })
   .then(drawLines);
 
+let myColor = d3.scaleSequential([0, genres.length - 1], d3.interpolateRainbow);
 
 const scales = {
   x: d3.scaleTime(),
@@ -279,24 +280,43 @@ function drawLines(data) {
   Object.entries(game_reviews_per_day_map).map(k => {
     let title = k[0];
     let dates = k[1];
+    // let max_count = 0;
 
     Object.entries(dates).map(d => {
       let date = new Date(d[0]);
       let reviews = d[1];
-
       let year = date.getFullYear();
+
+      // if(title === "GOD EATER 3") {
+      //   console.log(d);
+      // }
 
       if(!(title in arr_by_game)) {
         arr_by_game[title] = {};
       }
 
       if(!(year in arr_by_game[title])) {
-        arr_by_game[title][year] = [];
+        arr_by_game[title][year] = {'dates': []};
       }
 
-      arr_by_game[title][year].push({'date_posted': date, 'reviews': reviews})
+      arr_by_game[title][year].dates.push({'date_posted': date, 'reviews': reviews});
+
+      if(!('max_count' in arr_by_game[title][year])) {
+        arr_by_game[title][year]['max_count'] = 0;
+      }
+      arr_by_game[title][year]['max_count'] = Math.max(arr_by_game[title][year]['max_count'], reviews);
+
+      // arr_by_game[title][year]['max_count'] = max_count;
     });
   });
+
+  function sortByDateAscending(a, b) {
+    return a.date_posted - b.date_posted;
+  }
+
+  // console.log(Object.values(arr_by_game));
+  Object.values(arr_by_game).forEach(y => Object.values(y).forEach(d => d.dates.sort(sortByDateAscending)));
+  // data = data.sort(sortByDateAscending);
 
 
   drawTitles();
@@ -319,16 +339,28 @@ function drawLines(data) {
   //          .call(d3.axisLeft(y));
 
   let line = d3.line()
-               .x(d => scales.x(d.date_posted))
-               .y(d => scales.y(d.reviews));
+               .x(d => scales.x(d.date_posted) + margin.left)
+               .y(d => {
+                 let y = scales.y(d.reviews);
+                 // console.log("========");
+                 // console.log(d.reviews);
+                 // console.log(y);
+                 // console.log(y + margin.top);
+                 return y + margin.top;
+               });
 
   let lines = lines_svg.append('g')
                        .append('path')
                        .attr('d', d => {
-                         let l = line(arr_by_game[currentTitle][currentYear]);
+                         let l = line(arr_by_game[currentTitle][currentYear].dates);
                          // console.log(l);
                          return l;
-                       });
+                       })
+                       .attr("stroke", d => {
+                         return myColor(genres.indexOf(currentGenre));
+                       })
+                       .style("stroke-width", 3)
+                       .style("fill", "none");
 
   // let lines = lines_svg.append('g')
   //                      .append('path')
@@ -349,32 +381,32 @@ function drawLines(data) {
       .text(title);
     currentTitle = title;
 
-    // Create new data with the selection?
-    let dataFilter = data.map(d => {
-      return {
-        title: d.title
-      }
-    });
+    drawAxis();
 
-    // Give these new data to update line
-    // line.datum(dataFilter)
-    //     .transition()
-    //     .duration(1000)
-    //     .attr('d', d3.line()
-    //                  .x(function(d) {
-    //                    // console.log(d);
-    //                    return scales.x(+d.time)
-    //                  })
-    //                  .y(function(d) { return scales.y(+d.value) })
-    //     )
-    //     .attr('stroke', myColor(title));
+    let dataFilter = arr_by_game[title][currentYear].dates !== undefined ?
+      arr_by_game[currentTitle][year].dates : [];
+    console.log(dataFilter);
+
+    lines.attr('d', d => {
+           let l = line(dataFilter);
+           console.log(l);
+           return l;
+         })
+         .attr('stroke', myColor(genres.indexOf(currentGenre)));
   }
 
   function updateByYear(year) {
     d3.selectAll('.x-axis-title')
       .text(year);
-
     currentYear = year;
+
+    drawAxis();
+
+    let dataFilter = arr_by_game[currentTitle][year].dates !== undefined ?
+      arr_by_game[currentTitle][year].dates : [];
+
+    lines.attr('d', d => line(dataFilter))
+         .attr('stroke', myColor(genres.indexOf(currentGenre)));
   }
 
   // When the button is changed, run the updateChart function
@@ -433,7 +465,13 @@ function drawTitles() {
         .attr('transform', 'rotate(-90)');
 }
 
+function nearestThousand(value) {
+  return Math.round(value/1000)*1000;
+}
+
 function drawAxis() {
+  lines_svg.selectAll('axis')
+           .remove();
   // place the xaxis and yaxis in their own groups
   const xGroup = lines_svg.append('g')
                           .attr('id', 'x-axis')
@@ -441,6 +479,14 @@ function drawAxis() {
   const yGroup = lines_svg.append('g')
                           .attr('id', 'y-axis')
                           .attr('class', 'axis');
+
+  let value = arr_by_game[currentTitle][currentYear].max_count;
+  console.log(value);
+  let newMax = nearestThousand(value);
+
+  scales.x.domain([new Date(`${currentYear}-1-1`), new Date(`${currentYear}-12-31`)]);
+
+  scales.y.domain([0, newMax]);
 
   // create axis generators
   const xAxis = d3.axisBottom(scales.x);
@@ -451,7 +497,7 @@ function drawAxis() {
 
   yAxis.ticks(5)
        .tickSizeInner(-lines_width)
-       .tickFormat(d => d3.format('.1s')(d))
+       .tickFormat(d => d3.format('.2s')(d))
        .tickSizeOuter(0);
 
   // shift x axis to correct location
