@@ -1,9 +1,9 @@
 /**
  * Final Steam Data
  */
-const svg = d3.select("body").select("svg#sunburst");
-const width = parseInt(svg.style("width"));
-const height = parseInt(svg.style("height"));
+const svg = d3.select('body').select('svg#sunburst');
+const width = parseInt(svg.style('width'));
+const height = parseInt(svg.style('height'));
 
 const years = [2015, 2016, 2017, 2018];
 const titles = ["PLAYERUNKNOWN'S BATTLEGROUNDS", "Human: Fall Flat", "GOD EATER 3", "Battlefleet Gothic: Armada 2",
@@ -20,7 +20,7 @@ const titles = ["PLAYERUNKNOWN'S BATTLEGROUNDS", "Human: Fall Flat", "GOD EATER 
 console.log('width=%s, height=%s', width, height);
 
 const radius = width / 6;
-let format = d3.format(",d");
+let format = d3.format(',d');
 let arc = d3.arc()
             .startAngle(d => d.x0)
             .endAngle(d => d.x1)
@@ -58,37 +58,37 @@ function draw(data) {
   color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
 
   let root = partition(data);
-  console.log("root");
+  console.log('root');
   // console.log(root);
-  // console.log("end");
+  // console.log('end');
 
   root.each(d => d.current = d);
 
-  const thisSvg = svg.attr("viewBox", [0, 0, width, width])
-                     .style("font", "10px sans-serif");
+  const thisSvg = svg.attr('viewBox', [0, 0, width, width])
+                     .style('font', '10px sans-serif');
 
-  const g = thisSvg.append("g")
-                   .attr("transform", `translate(${width / 2},${width / 2})`);
+  const g = thisSvg.append('g')
+                   .attr('transform', `translate(${width / 2},${width / 2})`);
 
-  const path = g.append("g")
-                .selectAll("path")
+  const path = g.append('g')
+                .selectAll('path')
                 .data(root.descendants().slice(1))
-                .join("path")
-                .attr("fill", d => {
+                .join('path')
+                .attr('fill', d => {
                   while (d.depth > 1) d = d.parent;
                   return color(d.data.name);
                 })
-                .attr("fill-opacity", d => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
-                .attr("d", d => arc(d.current));
+                .attr('fill-opacity', d => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
+                .attr('d', d => arc(d.current));
 
   path.filter(d => d.children)
-      .style("cursor", "pointer")
-      .on("click", clicked);
+      .style('cursor', 'pointer')
+      .on('click', clicked);
 
-  // console.log("path");
+  // console.log('path');
   // console.log(path);
 
-  path.append("title")
+  path.append('title')
       .text(d => {
         // console.log(d);
         let joined;
@@ -103,29 +103,29 @@ function draw(data) {
           joined = `${d.ancestors()
                        .map(d => d.data.name)
                        .reverse()
-                       .join("/")}\n${format(d.data.size === undefined ? d.value : d.data.size)}`
+                       .join('/')}\n${format(d.data.size === undefined ? d.value : d.data.size)}`
         }
         return joined;
       });
 
-  const label = g.append("g")
-                 .attr("pointer-events", "none")
-                 .attr("text-anchor", "middle")
-                 .style("user-select", "none")
-                 .selectAll("text")
+  const label = g.append('g')
+                 .attr('pointer-events', 'none')
+                 .attr('text-anchor', 'middle')
+                 .style('user-select', 'none')
+                 .selectAll('text')
                  .data(root.descendants().slice(1))
-                 .join("text")
-                 .attr("dy", "0.35em")
-                 .attr("fill-opacity", d => +labelVisible(d.current))
-                 .attr("transform", d => labelTransform(d.current))
+                 .join('text')
+                 .attr('dy', '0.35em')
+                 .attr('fill-opacity', d => +labelVisible(d.current))
+                 .attr('transform', d => labelTransform(d.current))
                  .text(d => d.data.name);
 
-  const parent = g.append("circle")
+  const parent = g.append('circle')
                   .datum(root)
-                  .attr("r", radius)
-                  .attr("fill", "none")
-                  .attr("pointer-events", "all")
-                  .on("click", clicked);
+                  .attr('r', radius)
+                  .attr('fill', 'none')
+                  .attr('pointer-events', 'all')
+                  .on('click', clicked);
 
   function clicked(p) {
     parent.datum(p.parent || root);
@@ -143,21 +143,21 @@ function draw(data) {
     // so that if this transition is interrupted, entering arcs will start
     // the next transition from the desired position.
     path.transition(t)
-        .tween("data", d => {
+        .tween('data', d => {
           const i = d3.interpolate(d.current, d.target);
           return t => d.current = i(t);
         })
         .filter(function (d) {
-          return +this.getAttribute("fill-opacity") || arcVisible(d.target);
+          return +this.getAttribute('fill-opacity') || arcVisible(d.target);
         })
-        .attr("fill-opacity", d => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
-        .attrTween("d", d => () => arc(d.current));
+        .attr('fill-opacity', d => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
+        .attrTween('d', d => () => arc(d.current));
 
     label.filter(function (d) {
-      return +this.getAttribute("fill-opacity") || labelVisible(d.target);
+      return +this.getAttribute('fill-opacity') || labelVisible(d.target);
     }).transition(t)
-         .attr("fill-opacity", d => +labelVisible(d.target))
-         .attrTween("transform", d => () => labelTransform(d.current));
+         .attr('fill-opacity', d => +labelVisible(d.target))
+         .attrTween('transform', d => () => labelTransform(d.current));
   }
 
   function arcVisible(d) {
@@ -175,38 +175,41 @@ function draw(data) {
   }
 }
 
-const lines_svg = d3.select("body").select("svg#lines");
-const l_width = parseInt(lines_svg.style("width"));
-const l_height = parseInt(lines_svg.style("height"));
+const lines_svg = d3.select('body').select('svg#lines');
+const l_width = parseInt(lines_svg.style('width'));
+const l_height = parseInt(lines_svg.style('height'));
 
 const margin = {top: 60, right: 30, bottom: 60, left: 60},
       lines_width = l_width - margin.left - margin.right,
       lines_height = l_height - margin.top - margin.bottom;
 
-lines_svg.append("g")
-         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+lines_svg.append('g')
+         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 console.log(lines_svg);
 
-const defaultBeginDate = new Date("2018-1-1");
-const defaultEndDate = new Date("2018-12-31");
+const defaultBeginDate = new Date('2018-1-1');
+const defaultEndDate = new Date('2018-12-31');
 
-d3.select("#titleSelectButton")
+let currentTitle = titles[0];
+let currentYear = 2018;
+
+d3.select('#titleSelectButton')
   .selectAll('titleOptions')
   .data(titles)
   .enter()
   .append('option')
   .text(d => { return d; })           // text showed in the menu
-  .attr("value", d => { return d; }); // corresponding value returned by the button
+  .attr('value', d => { return d; }); // corresponding value returned by the button
 
-d3.select("#yearSelectButton")
+d3.select('#yearSelectButton')
   .selectAll('yearOptions')
   .data(years)
   .enter()
   .append('option')
   .text(d => { return d; })           // text showed in the menu
   .property('selected', d => d === defaultBeginDate.getFullYear())
-  .attr("value", d => { return d; }); // corresponding value returned by the button
+  .attr('value', d => { return d; }); // corresponding value returned by the button
 
 var myColor = d3.scaleOrdinal()
                 .domain(titles)
@@ -267,9 +270,24 @@ scales.y
       .range([lines_height, 0])
       .domain([0, 8000]);
 
+// let game_reviews_arr = [];
+
+let arr_by_game = {};
+
 function drawLines(data) {
   console.log(data[0]);
   console.log(game_reviews_per_day_map);
+
+  Object.entries(game_reviews_per_day_map).map(k => {
+    // console.log(k[1]);
+    Object.entries(k[1]).map(d => {
+      if(!(k[0] in arr_by_game)) {
+        arr_by_game[k[0]] = [];
+      }
+      arr_by_game[k[0]].push({'date_posted': new Date(d[0]), 'count': d[1]})
+    });
+  });
+
 
   drawTitles();
   drawAxis();
@@ -278,8 +296,8 @@ function drawLines(data) {
   //           .domain([defaultBeginDate.getMonth(), defaultEndDate.getMonth()])
   //           .range([0, lines_width]);
   //
-  // lines_svg.append("g")
-  //          .attr("transform", "translate(0," + lines_height + ")")
+  // lines_svg.append('g')
+  //          .attr('transform', 'translate(0,' + lines_height + ')')
   //          .call(d3.axisBottom(x));
   //
   // // y axis
@@ -287,23 +305,59 @@ function drawLines(data) {
   //           .domain([0,20])
   //           .range([ lines_height, 0 ]);
   //
-  // lines_svg.append("g")
+  // lines_svg.append('g')
   //          .call(d3.axisLeft(y));
 
-  let line = lines_svg.append('g')
-                      .append("path")
-                      .datum(data)
-                      .attr("d", d3.line()
-                                   .x(d => scales.x(+d.date_posted))
-                                   .y(d => scales.y(game_reviews_per_day_map[d.title][d.date_posted]))
-                      )
-                      .attr("stroke", function(d){ return myColor("valueA") })
-                      .style("stroke-width", 4)
-                      .style("fill", "none");
+  let line = d3.line()
+               .x(function(d) {
+                 if(d.date_posted.getFullYear() === currentYear) {
+                   console.log(d);
+                   return scales.x(d.date_posted);
+                 }
+               })
+               .y(function(d) {
+                 if(d.date_posted.getFullYear() === currentYear) {
+                   // console.log(d);
+                   return scales.y(d.count);
+                 }
+               });
+
+  let lines = lines_svg.selectAll('lines')
+                       .data(arr_by_game[currentTitle])
+                       .enter()
+                       .append('g')
+                       .append('path')
+                       .attr('d', line);
+                       // .attr('d', d => {
+                       //   // console.log(d);
+                       //   // if(d.title === currentTitle) {
+                       //     // console.log(d);
+                       //     if(d.date_posted.getFullYear() === currentYear) {
+                       //       // console.log(d);
+                       //       return line(d);
+                       //     }
+                       //   // }
+                       // });
+
+  // let lines = lines_svg.append('g')
+  //                      .append('path')
+  //                      .datum(data)
+  //                      .attr('d', d3.line()
+  //                                   .x(d => {
+  //                                     // console.log(d);
+  //                                     return scales.x(d.date_posted)
+  //                                   })
+  //                                   .y(d => scales.y(game_reviews_per_day_map[d.title][d.date_posted]))
+  //                      )
+  //                      .attr('stroke', d => { return color(d.title) })
+  //                      .style('stroke-width', 4)
+  //                      .style('fill', 'none');
 
   function updateByTitle(title) {
     d3.selectAll('.x-axis-game-title')
       .text(title);
+    currentTitle = title;
+
     // Create new data with the selection?
     let dataFilter = data.map(d => {
       return {
@@ -312,35 +366,37 @@ function drawLines(data) {
     });
 
     // Give these new data to update line
-    line.datum(dataFilter)
-        .transition()
-        .duration(1000)
-        .attr("d", d3.line()
-                     .x(function(d) {
-                       // console.log(d);
-                       return scales.x(+d.time)
-                     })
-                     .y(function(d) { return scales.y(+d.value) })
-        )
-        .attr("stroke", myColor(title));
+    // line.datum(dataFilter)
+    //     .transition()
+    //     .duration(1000)
+    //     .attr('d', d3.line()
+    //                  .x(function(d) {
+    //                    // console.log(d);
+    //                    return scales.x(+d.time)
+    //                  })
+    //                  .y(function(d) { return scales.y(+d.value) })
+    //     )
+    //     .attr('stroke', myColor(title));
   }
 
   function updateByYear(year) {
     d3.selectAll('.x-axis-title')
       .text(year);
+
+    currentYear = year;
   }
 
   // When the button is changed, run the updateChart function
-  d3.select("#titleSelectButton").on("change", function(d) {
+  d3.select('#titleSelectButton').on('change', function(d) {
     // recover the option that has been chosen
-    let selectedOption = d3.select(this).property("value");
+    let selectedOption = d3.select(this).property('value');
     // run the updateChart function with this selected option
     updateByTitle(selectedOption)
   });
 
-  d3.select("#yearSelectButton").on("change", function(d) {
+  d3.select('#yearSelectButton').on('change', function(d) {
     // recover the option that has been chosen
-    let selectedOption = d3.select(this).property("value");
+    let selectedOption = d3.select(this).property('value');
     // run the updateChart function with this selected option
     updateByYear(selectedOption)
   });
@@ -400,7 +456,7 @@ function drawAxis() {
   const yAxis = d3.axisLeft(scales.y);
 
   // https://github.com/d3/d3-format#locale_formatPrefix
-  xAxis.tickFormat(d3.timeFormat("%b"))
+  xAxis.tickFormat(d3.timeFormat('%b'))
 
   yAxis.ticks(5)
        .tickSizeInner(-lines_width)
