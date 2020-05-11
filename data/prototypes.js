@@ -135,6 +135,11 @@ function draw(data) {
   function clicked(p) {
     parent.datum(p.parent || root);
 
+    if(p.depth === 2) {
+      console.log(p);
+      updateByTitle(p.data.name);
+    }
+
     root.each(d => d.target = {
       x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
       x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
@@ -338,19 +343,9 @@ function drawLines(data) {
   // lines_svg.append('g')
   //          .call(d3.axisLeft(y));
 
-  let line = d3.line()
-               .x(d => scales.x(d.date_posted) + margin.left)
-               .y(d => {
-                 let y = scales.y(d.reviews);
-                 // console.log("========");
-                 // console.log(d.reviews);
-                 // console.log(y);
-                 // console.log(y + margin.top);
-                 return y + margin.top;
-               });
-
   let lines = lines_svg.append('g')
                        .append('path')
+                       .attr('id', 'linez')
                        .attr('d', d => {
                          let l = line(arr_by_game[currentTitle][currentYear].dates);
                          // console.log(l);
@@ -361,55 +356,6 @@ function drawLines(data) {
                        })
                        .style("stroke-width", 3)
                        .style("fill", "none");
-
-  // let lines = lines_svg.append('g')
-  //                      .append('path')
-  //                      .datum(data)
-  //                      .attr('d', d3.line()
-  //                                   .x(d => {
-  //                                     // console.log(d);
-  //                                     return scales.x(d.date_posted)
-  //                                   })
-  //                                   .y(d => scales.y(game_reviews_per_day_map[d.title][d.date_posted]))
-  //                      )
-  //                      .attr('stroke', d => { return color(d.title) })
-  //                      .style('stroke-width', 4)
-  //                      .style('fill', 'none');
-
-  function updateByTitle(title) {
-    d3.selectAll('.x-axis-game-title')
-      .text(title);
-    currentTitle = title;
-
-    drawAxis();
-
-    let dataFilter = arr_by_game[title][currentYear] !== undefined &&
-                     arr_by_game[title][currentYear].dates !== undefined ?
-                      arr_by_game[title][currentYear].dates : [];
-    console.log(dataFilter);
-
-    lines.attr('d', d => {
-           let l = line(dataFilter);
-           console.log(l);
-           return l;
-         })
-         .attr('stroke', myColor(genres.indexOf(currentGenre)));
-  }
-
-  function updateByYear(year) {
-    d3.selectAll('.x-axis-title')
-      .text(year);
-    currentYear = year;
-
-    drawAxis();
-
-    let dataFilter = arr_by_game[currentTitle][year] !== undefined &&
-                     arr_by_game[currentTitle][year].dates !== undefined ?
-                      arr_by_game[currentTitle][year].dates : [];
-
-    lines.attr('d', d => line(dataFilter))
-         .attr('stroke', myColor(genres.indexOf(currentGenre)));
-  }
 
   // When the button is changed, run the updateChart function
   d3.select('#titleSelectButton').on('change', function(d) {
@@ -425,6 +371,45 @@ function drawLines(data) {
     // run the updateChart function with this selected option
     updateByYear(selectedOption)
   });
+}
+
+let line = d3.line()
+             .x(d => scales.x(d.date_posted) + margin.left)
+             .y(d => scales.y(d.reviews) + margin.top);
+
+function updateByTitle(title) {
+  d3.selectAll('.x-axis-game-title')
+    .text(title);
+  currentTitle = title;
+
+  drawAxis();
+
+  let dataFilter = arr_by_game[title][currentYear] !== undefined &&
+  arr_by_game[title][currentYear].dates !== undefined ?
+    arr_by_game[title][currentYear].dates : [];
+  console.log(dataFilter);
+
+  let lines = lines_svg.select('#linez');
+
+  lines.attr('d', d => line(dataFilter))
+       .attr('stroke', myColor(genres.indexOf(currentGenre)));
+}
+
+function updateByYear(year) {
+  d3.selectAll('.x-axis-title')
+    .text(year);
+  currentYear = year;
+
+  drawAxis();
+
+  let dataFilter = arr_by_game[currentTitle][year] !== undefined &&
+  arr_by_game[currentTitle][year].dates !== undefined ?
+    arr_by_game[currentTitle][year].dates : [];
+
+  let lines = lines_svg.select('#linez');
+
+  lines.attr('d', d => line(dataFilter))
+       .attr('stroke', myColor(genres.indexOf(currentGenre)));
 }
 
 function drawTitles() {
