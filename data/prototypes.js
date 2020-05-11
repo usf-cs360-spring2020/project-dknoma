@@ -135,8 +135,20 @@ function draw(data) {
   function clicked(p) {
     parent.datum(p.parent || root);
 
+    if(p.depth > 1) {
+      let ancestors = p.ancestors();
+      for (let i = 0; i < ancestors.length; i++) {
+        let n = ancestors[i];
+        if (n.depth === 1) {
+          currentGenre = n.data.name;
+          break;
+        }
+      }
+    } else if(p.depth === 1) {
+      currentGenre = p.data.name;
+    }
+
     if(p.depth === 2) {
-      console.log(p);
       updateByTitle(p.data.name);
     }
 
@@ -319,29 +331,12 @@ function drawLines(data) {
     return a.date_posted - b.date_posted;
   }
 
-  // console.log(Object.values(arr_by_game));
   Object.values(arr_by_game).forEach(y => Object.values(y).forEach(d => d.dates.sort(sortByDateAscending)));
   // data = data.sort(sortByDateAscending);
 
 
   drawTitles();
   drawAxis();
-  // x axis
-  // let x = d3.scaleLinear()
-  //           .domain([defaultBeginDate.getMonth(), defaultEndDate.getMonth()])
-  //           .range([0, lines_width]);
-  //
-  // lines_svg.append('g')
-  //          .attr('transform', 'translate(0,' + lines_height + ')')
-  //          .call(d3.axisBottom(x));
-  //
-  // // y axis
-  // let y = d3.scaleLinear()
-  //           .domain([0,20])
-  //           .range([ lines_height, 0 ]);
-  //
-  // lines_svg.append('g')
-  //          .call(d3.axisLeft(y));
 
   let lines = lines_svg.append('g')
                        .append('path')
