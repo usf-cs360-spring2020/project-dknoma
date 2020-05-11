@@ -94,44 +94,24 @@
 
         <h3>Columns</h3>
         <ol>
-          <li>Date Posted
+          <li>date_posted
             <ul>
               <li>Posting date of the review.</li>
             </ul>
           </li>
-          <li>Funny
-            <ul>
-              <li>Count of how many users found this review funny.</li>
-            </ul>
-          </li>
-          <li>Helpful
-            <ul>
-              <li>Count of how many users found this review helpful.</li>
-            </ul>
-          </li>
-          <li>Hours Played
+          <li>hour_played
             <ul>
               <li>How many hours the reviewer has played the game for.</li>
             </ul>
           </li>
-          <li>Is Early Access
-            <ul>
-              <li>If the game was in early access at the time of the review.</li>
-            </ul>
-          </li>
-          <li>Recommendation
+          <li>recommendation
             <ul>
               <li>If the reviewer recommends the game or not.</li>
             </ul>
           </li>
-          <li>Review
+          <li>title
             <ul>
-              <li>The user's review of the game.</li>
-            </ul>
-          </li>
-          <li>Title
-            <ul>
-              <li>The tile of the game.</li>
+              <li>The title of the game.</li>
             </ul>
           </li>
         </ol>
@@ -146,6 +126,24 @@
         <h1>Steam Games Complete Dataset</h1>
           <p>This dataset contains lifetime information on about 40,000 games on Steam's store. This dataset was used to give context on the details of the games themselves as the reviews dataset didn't contain much about besides the reviews. These two datasets were then combined to create hierarchical data to be run through d3.</p>
           <p>This dataset contains 20 columns and about 40,000 rows of data. Only 5 rows were used when wrangling to avoid bloating the input file with unnecessary data.</p>
+
+        <ol>
+          <li>all_reviews
+            <ul>
+              <li>Lifetime review score of the game (overwhelmingly positive, very positive, mostly positive,
+                positive, mixed, negative, mostly negative, very negative, overwhelmingly negative, etc).
+              </li>
+            </ul></li>
+          <li>genre
+            <ul>
+              <li>The genre of the game. Can be an array of comma separated values.</li>
+            </ul></li>
+          <li>title
+            <ul>
+              <li>The title of the game.</li>
+            </ul></li>
+          <li></li>
+        </ol>
       </div>
       <!-- End page content -->
     </div>
