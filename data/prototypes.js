@@ -77,16 +77,21 @@ function draw(data) {
   path.append("title")
       .text(d => {
         // console.log(d);
-        let value = format(d.data.size === undefined ? d.value : d.data.size);
+        let joined;
         if(d.parent.parent !== null && d.parent.parent.data.name === 'genre') {
-          console.log(d.children);
-          value = `review count = ${format(d.children.find(ele => ele.data.name === 'reviews').data.size)}`;
+          // console.log(d.children);
+          let value = `${format(d.children.find(ele => ele.data.name === 'reviews').data.size)}`;
+          let score = d.children
+                             .find(ele => ele.data.name !== 'reviews' && ele.data.name !== 'Game Details')
+                             .data.name;
+          joined = `Genre: ${d.parent.data.name}\nTitle: ${d.data.name}\nReview Score: ${score}\nReview count: ${value}`;
+        } else {
+          joined = `${d.ancestors()
+              .map(d => d.data.name)
+              .reverse()
+              .join("/")}\n${format(d.data.size === undefined ? d.value : d.data.size)}`
         }
-        // console.log(value);
-        return`${d.ancestors()
-            .map(d => d.data.name)
-            .reverse()
-            .join("/")}\n${value}`
+        return joined;
       });
 
   const label = g.append("g")
