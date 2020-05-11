@@ -230,44 +230,46 @@ d3.select('#yearSelectButton')
   .text(d => { return d; })           // text showed in the menu
   .property('selected', d => d === defaultBeginDate.getFullYear())
   .attr('value', d => { return d; }); // corresponding value returned by the button
-
 let game_reviews_per_day_map = {};
 
 d3.csv('steam_combined_final.csv', row => {
     // convert data to proper formats
-    let convert = {};
+    let date = new Date(row['date_posted']);
+    if(data.getFullYear() !== 2019) {
+      let convert = {};
 
-    let title = row['title'];
-    let all_reviews = row['all_reviews'].split(',')[0];
-    let genre = row['genre'];
-    let date_posted = new Date(row['date_posted']);
-    let helpful = row['helpful'];
-    let hour_played = row['hour_played'];
-    let recommendation = row['recommendation'];
+      let title = row['title'];
+      let all_reviews = row['all_reviews'].split(',')[0];
+      let genre = row['genre'];
+      let date_posted = date;
+      let helpful = row['helpful'];
+      let hour_played = row['hour_played'];
+      let recommendation = row['recommendation'];
 
-    convert['title'] = title;
-    convert['all_reviews'] = all_reviews;
-    convert['genre'] = genre;
-    convert['date_posted'] = date_posted;
-    convert['helpful'] = parseInt(helpful);
-    convert['hour_played'] = parseInt(hour_played);
-    convert['recommendation'] = recommendation;
+      convert['title'] = title;
+      convert['all_reviews'] = all_reviews;
+      convert['genre'] = genre;
+      convert['date_posted'] = date_posted;
+      convert['helpful'] = parseInt(helpful);
+      convert['hour_played'] = parseInt(hour_played);
+      convert['recommendation'] = recommendation;
 
-    // keep track of total count of posts per day
-    let dRev;
-    if(title in game_reviews_per_day_map) {
-      dRev = game_reviews_per_day_map[title];
-    } else {
-      dRev = game_reviews_per_day_map[title] = {};
+      // keep track of total count of posts per day
+      let dRev;
+      if (title in game_reviews_per_day_map) {
+        dRev = game_reviews_per_day_map[title];
+      } else {
+        dRev = game_reviews_per_day_map[title] = {};
+      }
+
+      if (date_posted in dRev) {
+        dRev[date_posted] = dRev[date_posted] + 1;
+      } else {
+        dRev[date_posted] = 1;
+      }
+
+      return convert;
     }
-
-    if(date_posted in dRev) {
-      dRev[date_posted] = dRev[date_posted] + 1;
-    } else {
-      dRev[date_posted] = 1;
-    }
-
-    return convert;
   })
   .then(drawLines);
 
@@ -396,6 +398,12 @@ function updateByTitle(title) {
 
   lines.attr('d', d => line(dataFilter))
        .attr('stroke', myColor(genres.indexOf(currentGenre)));
+
+  d3.select('#titleSelectButton')
+    .selectAll('titleOptions')
+    .data(titles)
+    .enter()
+    .property('selected', d => d === title)
 }
 
 /**

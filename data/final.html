@@ -103,7 +103,15 @@
                             <li>Zoom</li>
                         </ul>
                     </p>
-                    <p>Details on demand are available when hovering over each cell. When hovering over game title cells, a more detailed message is presented. The genre, title, review score, and total review count of that game are shown in a more organized manner. To get a more detailed view of the genre or game, clicking on the cell will zoom in the cell to that specific genre/game. Clicking on the center will then zoom back out to the previous level.</p>
+                    <p>Details on demand are available when hovering over each cell. When hovering over game title cells,
+                        a more detailed message is presented. The genre, title, review score, and total review count of
+                        that game are shown in a more organized manner. To get a more detailed view of the genre or
+                        game, clicking on the cell will zoom in the cell to that specific genre/game. Clicking on the
+                        center will then zoom back out to the previous level.</p>
+
+                    <p>Additionally, clicking on cells of a game's title will also change the view of the line graph
+                    to that of the same game title. The colors will also change to match the genre that is being
+                        looked at.</p>
 
                 <figure>
                     <svg width="960" height="600" id="sunburst">
@@ -114,7 +122,11 @@
 
                 <h2>Supplemental Visualization</h2>
 
-                    <p>This scatter plot encodes genre by color</p>
+                    <p>This line graph encodes months and dates on the x axis and review counts on the y axis. The
+                        titles show which year and game title is currently being looked at. The dropdown menus can
+                        be used to filter the graph for other years and titles. The visualization also switches to
+                        the view of the current title that was clicked on in the sunburst visualization. The colors
+                        also change depending on which genre was being looked at as well.</p>
 
                     <div>
                         <label for="titleSelectButton"></label><select id="titleSelectButton"></select>
@@ -124,8 +136,6 @@
                             </svg>
                         </figure>
                     </div>
-
-<!--                    <img src="final_yearly_average_steam_review_stats.png">-->
             </div>
         </div>
     </section>
