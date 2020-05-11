@@ -383,8 +383,9 @@ function drawLines(data) {
 
     drawAxis();
 
-    let dataFilter = arr_by_game[title][currentYear].dates !== undefined ?
-      arr_by_game[currentTitle][year].dates : [];
+    let dataFilter = arr_by_game[title][currentYear] !== undefined &&
+                     arr_by_game[title][currentYear].dates !== undefined ?
+                      arr_by_game[title][currentYear].dates : [];
     console.log(dataFilter);
 
     lines.attr('d', d => {
@@ -402,8 +403,9 @@ function drawLines(data) {
 
     drawAxis();
 
-    let dataFilter = arr_by_game[currentTitle][year].dates !== undefined ?
-      arr_by_game[currentTitle][year].dates : [];
+    let dataFilter = arr_by_game[currentTitle][year] !== undefined &&
+                     arr_by_game[currentTitle][year].dates !== undefined ?
+                      arr_by_game[currentTitle][year].dates : [];
 
     lines.attr('d', d => line(dataFilter))
          .attr('stroke', myColor(genres.indexOf(currentGenre)));
@@ -465,12 +467,17 @@ function drawTitles() {
         .attr('transform', 'rotate(-90)');
 }
 
-function nearestThousand(value) {
-  return Math.round(value/1000)*1000;
+function nearestCap(value) {
+  return value >= 1000 ? Math.round(value/1000) * 1000 :
+         value >= 100 ? Math.round(value/100) * 100 :
+         value >= 10 ? Math.round(value/10) * 10 : 10;
 }
 
 function drawAxis() {
-  lines_svg.selectAll('axis')
+  lines_svg.selectAll('#x-axis')
+           .remove();
+
+  lines_svg.selectAll('#y-axis')
            .remove();
   // place the xaxis and yaxis in their own groups
   const xGroup = lines_svg.append('g')
@@ -480,9 +487,10 @@ function drawAxis() {
                           .attr('id', 'y-axis')
                           .attr('class', 'axis');
 
-  let value = arr_by_game[currentTitle][currentYear].max_count;
+  let value = arr_by_game[currentTitle][currentYear] !== undefined ?
+    arr_by_game[currentTitle][currentYear].max_count : 8000;
   console.log(value);
-  let newMax = nearestThousand(value);
+  let newMax = nearestCap(value);
 
   scales.x.domain([new Date(`${currentYear}-1-1`), new Date(`${currentYear}-12-31`)]);
 
