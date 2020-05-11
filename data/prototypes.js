@@ -52,19 +52,14 @@ function partition(data) {
            (root);
 }
 
-let color;
 d3.json('steam_reduced_with_genre_no_reviews.json')
   .then(draw);
 
-// let color = d => d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, d.children.length + 1));
-
 function draw(data) {
-  color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
+  let color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
 
   let root = partition(data);
   console.log('root');
-  // console.log(root);
-  // console.log('end');
 
   root.each(d => d.current = d);
 
@@ -88,9 +83,6 @@ function draw(data) {
   path.filter(d => d.children)
       .style('cursor', 'pointer')
       .on('click', clicked);
-
-  // console.log('path');
-  // console.log(path);
 
   path.append('title')
       .text(d => {
@@ -304,10 +296,6 @@ function drawLines(data) {
       let reviews = d[1];
       let year = date.getFullYear();
 
-      // if(title === "GOD EATER 3") {
-      //   console.log(d);
-      // }
-
       if(!(title in arr_by_game)) {
         arr_by_game[title] = {};
       }
@@ -382,7 +370,6 @@ function updateByTitle(title) {
   let dataFilter = arr_by_game[title][currentYear] !== undefined &&
   arr_by_game[title][currentYear].dates !== undefined ?
     arr_by_game[title][currentYear].dates : [];
-  console.log(dataFilter);
 
   let lines = lines_svg.select('#linez');
 
@@ -469,7 +456,6 @@ function drawAxis() {
 
   let value = arr_by_game[currentTitle][currentYear] !== undefined ?
     arr_by_game[currentTitle][currentYear].max_count : 8000;
-  console.log(value);
   let newMax = nearestCap(value);
 
   scales.x.domain([new Date(`${currentYear}-1-1`), new Date(`${currentYear}-12-31`)]);
