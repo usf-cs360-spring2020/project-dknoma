@@ -235,7 +235,7 @@ let game_reviews_per_day_map = {};
 d3.csv('steam_combined_final.csv', row => {
     // convert data to proper formats
     let date = new Date(row['date_posted']);
-    if(data.getFullYear() !== 2019) {
+    if(date.getFullYear() !== 2019) {
       let convert = {};
 
       let title = row['title'];
