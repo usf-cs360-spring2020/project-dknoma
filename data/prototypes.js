@@ -270,8 +270,6 @@ scales.y
       .range([lines_height, 0])
       .domain([0, 8000]);
 
-// let game_reviews_arr = [];
-
 let arr_by_game = {};
 
 function drawLines(data) {
@@ -279,12 +277,24 @@ function drawLines(data) {
   console.log(game_reviews_per_day_map);
 
   Object.entries(game_reviews_per_day_map).map(k => {
-    // console.log(k[1]);
-    Object.entries(k[1]).map(d => {
-      if(!(k[0] in arr_by_game)) {
-        arr_by_game[k[0]] = [];
+    let title = k[0];
+    let dates = k[1];
+
+    Object.entries(dates).map(d => {
+      let date = new Date(d[0]);
+      let reviews = d[1];
+
+      let year = date.getFullYear();
+
+      if(!(title in arr_by_game)) {
+        arr_by_game[title] = {};
       }
-      arr_by_game[k[0]].push({'date_posted': new Date(d[0]), 'count': d[1]})
+
+      if(!(year in arr_by_game[title])) {
+        arr_by_game[title][year] = [];
+      }
+
+      arr_by_game[title][year].push({'date_posted': date, 'reviews': reviews})
     });
   });
 
@@ -309,35 +319,16 @@ function drawLines(data) {
   //          .call(d3.axisLeft(y));
 
   let line = d3.line()
-               .x(function(d) {
-                 if(d.date_posted.getFullYear() === currentYear) {
-                   console.log(d);
-                   return scales.x(d.date_posted);
-                 }
-               })
-               .y(function(d) {
-                 if(d.date_posted.getFullYear() === currentYear) {
-                   // console.log(d);
-                   return scales.y(d.count);
-                 }
-               });
+               .x(d => scales.x(d.date_posted))
+               .y(d => scales.y(d.reviews));
 
-  let lines = lines_svg.selectAll('lines')
-                       .data(arr_by_game[currentTitle])
-                       .enter()
-                       .append('g')
+  let lines = lines_svg.append('g')
                        .append('path')
-                       .attr('d', line);
-                       // .attr('d', d => {
-                       //   // console.log(d);
-                       //   // if(d.title === currentTitle) {
-                       //     // console.log(d);
-                       //     if(d.date_posted.getFullYear() === currentYear) {
-                       //       // console.log(d);
-                       //       return line(d);
-                       //     }
-                       //   // }
-                       // });
+                       .attr('d', d => {
+                         let l = line(arr_by_game[currentTitle][currentYear]);
+                         // console.log(l);
+                         return l;
+                       });
 
   // let lines = lines_svg.append('g')
   //                      .append('path')
@@ -456,7 +447,7 @@ function drawAxis() {
   const yAxis = d3.axisLeft(scales.y);
 
   // https://github.com/d3/d3-format#locale_formatPrefix
-  xAxis.tickFormat(d3.timeFormat('%b'))
+  xAxis.tickFormat(d3.timeFormat('%b'));
 
   yAxis.ticks(5)
        .tickSizeInner(-lines_width)
