@@ -396,7 +396,9 @@ function updateByTitle(title) {
 
   let lines = lines_svg.select('#linez');
 
-  lines.attr('d', d => line(dataFilter))
+  lines.transition()
+       .duration(500)
+       .attr('d', d => line(dataFilter))
        .attr('stroke', myColor(genres.indexOf(currentGenre)));
 
   d3.select('#titleSelectButton')
@@ -423,7 +425,9 @@ function updateByYear(year) {
 
   let lines = lines_svg.select('#linez');
 
-  lines.attr('d', d => line(dataFilter))
+  lines.transition()
+       .duration(500)
+       .attr('d', d => line(dataFilter))
        .attr('stroke', myColor(genres.indexOf(currentGenre)));
 }
 
