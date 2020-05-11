@@ -81,20 +81,23 @@
             <div class="content">
                 <h1 class="title">Prototype</h1>
                 <h2>Peer Feedback</h2>
+                    <p>There was either missing, incomplete, or feedback on the wrong version of the visualization for my beta. So the only real feedback I have is from the live feedback session.</p>
+                    <p>The main concerns were how to wrangle the data to create a hierarchical visualization and use the scatter plot for context. So I used python scripts to combine the two datasets. One file was used for the scatter plot to give context on trends and relationships over time. The combined csv was then run through a custom python script to turn it into hierarchical json format to be used in a sunburst visualization to show the breakdown of games per genre, the games' subtypes, and review count per game.</p>
+
                 <h2>Question</h2>
-                <p>For various genres of games, how do the recommendation and helpful scores compare to the amount of hours put into the game each year. Really popular games should have a good range of reviews from helpful reviews from committed players with many hours to reviews that don't have much substance from players who played for around and hour and quit.</p>
+                    <p>For various genres of games, how do the recommendation and helpful scores compare to the amount of hours put into the game each year. Really popular games should have a good range of reviews from helpful reviews from committed players with many hours to reviews that don't have much substance from players who played for around and hour and quit.</p>
 
                 <h2>Answer</h2>
-                <p>It doesn't seem that there is much useful information in the helpful scores as the yearly average scores are so low. This looks like it's due to how little that feature is used on most reviews.</p>
-                <p>That being said, people who do play a game for a significant amount of time tend to be the ones who leave reviews the most out of all reviewers. As there is no interactivity you can't tell, but the count of reviews posted at certain years along with the average hours played seems to show the peak playing time of certain games. Namely games like PLAYERUNKNOWN'S BATTLEGROUNDS (PUBG), Grand Theft Auto V (GTAV), MONSTER HUNTER: WORLD, Rocket League, and Rust. Having played many of these games around their peaks, it's neat seeing this correlation in my own visualization.</p>
+                    <p>It doesn't seem that there is much useful information in the helpful scores as the yearly average scores are so low. This looks like it's due to how little that feature is used on most reviews.</p>
+                    <p>That being said, people who do play a game for a significant amount of time tend to be the ones who leave reviews the most out of all reviewers. As there is no interactivity you can't tell, but the count of reviews posted at certain years along with the average hours played seems to show the peak playing time of certain games. Namely games like PLAYERUNKNOWN'S BATTLEGROUNDS (PUBG), Grand Theft Auto V (GTAV), MONSTER HUNTER: WORLD, Rocket League, and Rust. Having played many of these games around their peaks, it's neat seeing this correlation in my own visualization.</p>
 
-                <p>Many of said games are still played a lot today, just not to the degree that they once were. So it's interesting seeing these trends shift as different games pop up at different peaks.</p>
+                    <p>Many of said games are still played a lot today, just not to the degree that they once were. So it's interesting seeing these trends shift as different games pop up at different peaks.</p>
 
                 <h2>Encoding</h2>
-                <p>The visualization is encoding genre by color. Each genre has a selection of games of that genre which are also encoded in the same color as that genre.</p>
+                    <p>The visualization is encoding genre by color. Each genre has a selection of games of that genre which are also encoded in the same color as that genre.</p>
 
                 <h2>Interactivity</h2>
-                <p>Details on demand are available when hovering over each cell. When hovering over game titles and reviews cells, the total count of reviews of that game are shown along with the title and genre. To get a more detailed view of the genre or game, clicking on the cell will zoom in the cell to that specific genre/game. Clicking on the center will then zoom back out to the previous level.</p>
+                    <p>Details on demand are available when hovering over each cell. When hovering over game titles and reviews cells, the total count of reviews of that game are shown along with the title and genre. To get a more detailed view of the genre or game, clicking on the cell will zoom in the cell to that specific genre/game. Clicking on the center will then zoom back out to the previous level.</p>
 
                 <figure>
                     <svg width="960" height="600" id="sunburst">
@@ -105,7 +108,7 @@
 
                 <h2>Supplemental Visualization</h2>
 
-                <p>This scatter plot encodes genre by color</p>
+                    <p>This scatter plot encodes genre by color</p>
 
                 <img src="final_yearly_average_steam_review_stats.png">
             </div>
