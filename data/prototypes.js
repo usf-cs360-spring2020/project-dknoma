@@ -37,6 +37,7 @@ function partition(data) {
   const root = d3.hierarchy(data)
                  .sum(d => d.value)
                  .sort((a, b) => {
+                   // Sort games by review count. Sort all others by total children nodes.
                    let value;
                    if (a.parent.parent !== null && a.parent.parent.data.name === 'genre') {
                      value = b.children.find(ele => ele.data.name === 'reviews').data.size -
@@ -69,6 +70,7 @@ function draw(data) {
   const g = thisSvg.append('g')
                    .attr('transform', `translate(${width / 2},${width / 2})`);
 
+  // slice up the sunburst
   const path = g.append('g')
                 .selectAll('path')
                 .data(root.descendants().slice(1))
@@ -84,12 +86,12 @@ function draw(data) {
       .style('cursor', 'pointer')
       .on('click', clicked);
 
+  // Details on demand
   path.append('title')
       .text(d => {
-        // console.log(d);
         let joined;
+        // Show formatted text when hovering over game titles
         if (d.parent.parent !== null && d.parent.parent.data.name === 'genre') {
-          // console.log(d.children);
           let value = `${format(d.children.find(ele => ele.data.name === 'reviews').data.size)}`;
           let score = d.children
                        .find(ele => ele.data.name !== 'reviews' && ele.data.name !== 'Game Details')
@@ -124,9 +126,11 @@ function draw(data) {
                   .attr('pointer-events', 'all')
                   .on('click', clicked);
 
+  // on click function. zooms in the sunburst to the cell that is clicked on
   function clicked(p) {
     parent.datum(p.parent || root);
 
+    // set the current genre based on what node was clicked
     if(p.depth > 1) {
       let ancestors = p.ancestors();
       for (let i = 0; i < ancestors.length; i++) {
@@ -140,6 +144,7 @@ function draw(data) {
       currentGenre = p.data.name;
     }
 
+    // Update the connected line graph visualization to the game that was clicked on
     if(p.depth === 2) {
       updateByTitle(p.data.name);
     }
@@ -208,6 +213,7 @@ const defaultEndDate = new Date('2018-12-31');
 let currentTitle = titles[0];
 let currentYear = 2018;
 
+// Init drop down buttons
 d3.select('#titleSelectButton')
   .selectAll('titleOptions')
   .data(titles)
@@ -228,6 +234,7 @@ d3.select('#yearSelectButton')
 let game_reviews_per_day_map = {};
 
 d3.csv('steam_combined_final.csv', row => {
+    // convert data to proper formats
     let convert = {};
 
     let title = row['title'];
@@ -246,6 +253,7 @@ d3.csv('steam_combined_final.csv', row => {
     convert['hour_played'] = parseInt(hour_played);
     convert['recommendation'] = recommendation;
 
+    // keep track of total count of posts per day
     let dRev;
     if(title in game_reviews_per_day_map) {
       dRev = game_reviews_per_day_map[title];
@@ -265,13 +273,12 @@ d3.csv('steam_combined_final.csv', row => {
 
 let myColor = d3.scaleSequential([0, genres.length - 1], d3.interpolateRainbow);
 
+// set up scales
 const scales = {
   x: d3.scaleTime(),
   y: d3.scaleLinear(),
 };
 
-// we are going to hardcode the domains, so we can setup our scales now
-// that is one benefit of prototyping!
 scales.x
       .range([0, lines_width])
       .domain([defaultBeginDate, defaultEndDate]);
@@ -286,10 +293,27 @@ function drawLines(data) {
   console.log(data[0]);
   console.log(game_reviews_per_day_map);
 
+  /*
+   * Setup an array:
+   * [
+   *  {
+   *    title: {
+   *      year: {
+   *        dates: [
+   *          {date: review count},
+   *          ...
+   *        ],
+   *        max_count: <upper bound of total reviews in a day of that year>
+   *      },
+   *      ...
+   *    }
+   *  },
+   *  ...
+   * ]
+   */
   Object.entries(game_reviews_per_day_map).map(k => {
     let title = k[0];
     let dates = k[1];
-    // let max_count = 0;
 
     Object.entries(dates).map(d => {
       let date = new Date(d[0]);
@@ -310,8 +334,6 @@ function drawLines(data) {
         arr_by_game[title][year]['max_count'] = 0;
       }
       arr_by_game[title][year]['max_count'] = Math.max(arr_by_game[title][year]['max_count'], reviews);
-
-      // arr_by_game[title][year]['max_count'] = max_count;
     });
   });
 
@@ -319,47 +341,46 @@ function drawLines(data) {
     return a.date_posted - b.date_posted;
   }
 
+  // Sort by time so lines actually work
   Object.values(arr_by_game).forEach(y => Object.values(y).forEach(d => d.dates.sort(sortByDateAscending)));
-  // data = data.sort(sortByDateAscending);
-
 
   drawTitles();
   drawAxis();
 
+  // draw line
   let lines = lines_svg.append('g')
                        .append('path')
                        .attr('id', 'linez')
-                       .attr('d', d => {
-                         let l = line(arr_by_game[currentTitle][currentYear].dates);
-                         // console.log(l);
-                         return l;
-                       })
-                       .attr("stroke", d => {
-                         return myColor(genres.indexOf(currentGenre));
-                       })
+                       .attr('d', d => line(arr_by_game[currentTitle][currentYear].dates))
+                       .attr("stroke", d => myColor(genres.indexOf(currentGenre)))
                        .style("stroke-width", 3)
                        .style("fill", "none");
 
-  // When the button is changed, run the updateChart function
+  // update vis on select title
   d3.select('#titleSelectButton').on('change', function(d) {
-    // recover the option that has been chosen
     let selectedOption = d3.select(this).property('value');
-    // run the updateChart function with this selected option
     updateByTitle(selectedOption)
   });
 
+  // update vis on select year
   d3.select('#yearSelectButton').on('change', function(d) {
-    // recover the option that has been chosen
     let selectedOption = d3.select(this).property('value');
-    // run the updateChart function with this selected option
     updateByYear(selectedOption)
   });
 }
+
+/********************
+ * Helper Functions *
+ ********************/
 
 let line = d3.line()
              .x(d => scales.x(d.date_posted) + margin.left)
              .y(d => scales.y(d.reviews) + margin.top);
 
+/**
+ * Do update if there is data for that year
+ * @param title
+ */
 function updateByTitle(title) {
   d3.selectAll('.x-axis-game-title')
     .text(title);
@@ -377,6 +398,10 @@ function updateByTitle(title) {
        .attr('stroke', myColor(genres.indexOf(currentGenre)));
 }
 
+/**
+ * Do update if there is data for that year
+ * @param year
+ */
 function updateByYear(year) {
   d3.selectAll('.x-axis-title')
     .text(year);
@@ -394,6 +419,9 @@ function updateByYear(year) {
        .attr('stroke', myColor(genres.indexOf(currentGenre)));
 }
 
+/**
+ * Draw titles
+ */
 function drawTitles() {
   const xMiddle = margin.left + midpoint(scales.x.range());
   const yMiddle = margin.top + midpoint(scales.y.range());
@@ -434,6 +462,9 @@ function drawTitles() {
         .attr('transform', 'rotate(-90)');
 }
 
+/**
+ * Find appropriate upper bounds
+ */
 function nearestCap(value) {
   return value >= 1000 ? Math.round(value/1000) * 1000 :
          value >= 100 ? Math.round(value/100) * 100 :
@@ -466,7 +497,6 @@ function drawAxis() {
   const xAxis = d3.axisBottom(scales.x);
   const yAxis = d3.axisLeft(scales.y);
 
-  // https://github.com/d3/d3-format#locale_formatPrefix
   xAxis.tickFormat(d3.timeFormat('%b'));
 
   yAxis.ticks(5)
@@ -483,9 +513,6 @@ function drawAxis() {
   yGroup.call(yAxis);
 }
 
-/**
- * Helper Functions
- */
 function midpoint(range) {
   return range[0] + (range[1] - range[0]) / 2.0;
 }
